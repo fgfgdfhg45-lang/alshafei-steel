@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alshafei-steel.vercel.app/sitemap.xml
