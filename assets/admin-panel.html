@@ -1,0 +1,1065 @@
+<!-- ========== لوحة تحكم الشافعي ستيل — يتم تحميل هذا الملف ديناميكيًا فقط عند فتح زر الإدارة ========== -->
+<style id="admin-panel-style">
+/* شاشة كلمة السر */
+#admin-lock{
+  position:fixed;
+  inset:0;
+  background:rgba(5,8,22,0.97);
+  backdrop-filter:blur(20px);
+  z-index:9000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:20px;
+}
+#admin-lock.active{display:flex;}
+#admin-lock h2{
+  font-size:22px;
+  color:#fff;
+  font-family:'Cairo',sans-serif;
+}
+#admin-lock input{
+  padding:14px 22px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+  font-size:16px;
+  font-family:'Cairo',sans-serif;
+  text-align:center;
+  width:260px;
+  outline:none;
+}
+#admin-lock input:focus{border-color:var(--primary);}
+#admin-lock-btn{
+  padding:12px 30px;
+  background:linear-gradient(45deg,var(--primary),var(--secondary));
+  border:none;
+  border-radius:30px;
+  color:#fff;
+  font-size:15px;
+  font-family:'Cairo',sans-serif;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.3s;
+}
+#admin-lock-btn:hover{opacity:0.85;}
+#admin-lock-err{color:#ff4d4d;font-size:13px;font-family:'Cairo',sans-serif;display:none;}
+#admin-lock-close{
+  position:absolute;
+  top:20px;
+  left:24px;
+  font-size:28px;
+  color:rgba(255,255,255,0.5);
+  cursor:pointer;
+  background:none;
+  border:none;
+  line-height:1;
+}
+#admin-lock-close:hover{color:#fff;}
+
+/* الداشبورد */
+#admin-dashboard{
+  position:fixed;
+  inset:0;
+  background:var(--dark);
+  z-index:9100;
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  font-family:'Cairo',sans-serif;
+  direction:rtl;
+}
+#admin-dashboard.active{display:flex;}
+
+/* هيدر الداشبورد */
+.dash-header{
+  background:rgba(13,19,36,0.95);
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  padding:16px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+}
+.dash-header h1{
+  font-size:18px;
+  font-weight:800;
+  background:linear-gradient(90deg,var(--primary),var(--secondary));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.dash-header-btns{display:flex;gap:10px;align-items:center;}
+.dash-export-btn{
+  padding:9px 20px;
+  background:linear-gradient(45deg,#22c55e,#16a34a);
+  border:none;
+  border-radius:25px;
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+  font-family:'Cairo',sans-serif;
+  cursor:pointer;
+  transition:0.3s;
+  display:flex;align-items:center;gap:6px;
+}
+.dash-export-btn:hover{opacity:0.88;transform:translateY(-1px);}
+.dash-close-btn{
+  padding:9px 18px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:25px;
+  color:#fff;
+  font-size:14px;
+  font-family:'Cairo',sans-serif;
+  cursor:pointer;
+  transition:0.3s;
+}
+.dash-close-btn:hover{background:rgba(255,80,80,0.2);border-color:rgba(255,80,80,0.5);}
+
+/* التابس */
+.dash-tabs{
+  display:flex;
+  gap:0;
+  background:rgba(13,19,36,0.6);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:0 24px;
+  flex-shrink:0;
+}
+.dash-tab{
+  padding:14px 22px;
+  background:none;
+  border:none;
+  border-bottom:3px solid transparent;
+  color:rgba(255,255,255,0.5);
+  font-size:14px;
+  font-family:'Cairo',sans-serif;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+  white-space:nowrap;
+}
+.dash-tab.active{
+  color:#fff;
+  border-bottom-color:var(--secondary);
+}
+.dash-tab:hover:not(.active){color:rgba(255,255,255,0.8);}
+
+/* المحتوى */
+.dash-body{
+  flex:1;
+  overflow-y:auto;
+  padding:24px 28px;
+}
+.dash-panel{display:none;}
+.dash-panel.active{display:block;}
+
+/* بطاقات الماكينات في الداشبورد */
+.dash-machines-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:16px;
+}
+.dash-machine-card{
+  background:rgba(13,19,36,0.8);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;
+  padding:18px;
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  transition:0.3s;
+}
+.dash-machine-card:hover{border-color:rgba(30,63,168,0.35);}
+.dash-machine-thumb{
+  width:80px;
+  height:80px;
+  object-fit:contain;
+  border-radius:10px;
+  background:rgba(255,255,255,0.03);
+  padding:6px;
+  flex-shrink:0;
+}
+.dash-machine-fields{flex:1;display:flex;flex-direction:column;gap:8px;}
+
+/* تاب الطلبات */
+.dash-order-card{
+  background:rgba(13,19,36,0.8);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.dash-order-card select{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  color:#fff;
+  padding:8px 14px;
+  border-radius:8px;
+  font-family:'Cairo',sans-serif;
+  font-size:13px;
+}
+.dash-field{display:flex;flex-direction:column;gap:4px;}
+.dash-field label{font-size:11px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.5px;}
+.dash-field input,.dash-field select,.dash-field textarea{
+  padding:8px 12px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;
+  color:#fff;
+  font-size:13px;
+  font-family:'Cairo',sans-serif;
+  outline:none;
+  transition:0.25s;
+  width:100%;
+}
+.dash-field input:focus,.dash-field select:focus,.dash-field textarea:focus{
+  border-color:var(--primary);
+  background:rgba(30,63,168,0.08);
+}
+.dash-field textarea{resize:vertical;min-height:60px;}
+.dash-field select option{background:#102050;color:var(--text);}
+.dash-card-actions{
+  display:flex;
+  gap:8px;
+  margin-top:6px;
+}
+.dash-del-btn{
+  padding:6px 14px;
+  background:rgba(255,60,60,0.12);
+  border:1px solid rgba(255,60,60,0.25);
+  border-radius:8px;
+  color:#ff6b6b;
+  font-size:12px;
+  font-family:'Cairo',sans-serif;
+  cursor:pointer;
+  transition:0.2s;
+}
+.dash-del-btn:hover{background:rgba(255,60,60,0.25);}
+.dash-save-badge{
+  font-size:11px;
+  color:#22c55e;
+  display:none;
+  align-items:center;
+  gap:4px;
+}
+
+/* إضافة ماكينة */
+.dash-add-section{
+  background:rgba(30,63,168,0.06);
+  border:1px dashed rgba(30,63,168,0.30);
+  border-radius:16px;
+  padding:24px;
+  margin-bottom:20px;
+}
+.dash-add-section h3{
+  font-size:15px;
+  color:rgba(255,255,255,0.8);
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.dash-add-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+  margin-bottom:16px;
+}
+.dash-add-btn{
+  padding:11px 24px;
+  background:linear-gradient(45deg,var(--primary),var(--secondary));
+  border:none;
+  border-radius:25px;
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+  font-family:'Cairo',sans-serif;
+  cursor:pointer;
+  transition:0.3s;
+}
+.dash-add-btn:hover{opacity:0.85;}
+
+/* SEO */
+.dash-seo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+@media(max-width:700px){.dash-seo-grid{grid-template-columns:1fr;}}
+.dash-seo-card{
+  background:rgba(13,19,36,0.8);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;
+  padding:20px;
+}
+.dash-seo-card h3{
+  font-size:14px;
+  color:rgba(255,255,255,0.6);
+  margin-bottom:14px;
+  font-weight:700;
+  letter-spacing:0.5px;
+}
+.dash-seo-card input,.dash-seo-card textarea{
+  width:100%;
+  padding:10px 14px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  color:#fff;
+  font-size:13px;
+  font-family:'Cairo',sans-serif;
+  outline:none;
+  transition:0.25s;
+  margin-bottom:10px;
+}
+.dash-seo-card input:focus,.dash-seo-card textarea:focus{
+  border-color:var(--secondary);
+  background:rgba(232,160,32,0.06);
+}
+.dash-seo-card textarea{resize:vertical;min-height:80px;}
+
+/* نوتيفيكيشن */
+#dash-toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:linear-gradient(45deg,#22c55e,#16a34a);
+  color:#fff;
+  padding:12px 28px;
+  border-radius:30px;
+  font-family:'Cairo',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  z-index:99999;
+  transition:0.4s;
+  pointer-events:none;
+  white-space:nowrap;
+}
+#dash-toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ريسبونسيف */
+@media(max-width:600px){
+  .dash-machines-grid{grid-template-columns:1fr;}
+  .dash-body{padding:16px;}
+  .dash-tabs{overflow-x:auto;}
+  .dash-header{padding:12px 16px;}
+  .dash-header h1{font-size:15px;}
+}
+</style>
+</style>
+
+<!-- شاشة كلمة السر -->
+<div id="admin-lock">
+  <button id="admin-lock-close" onclick="closeAdminLock()">✕</button>
+  <h2>🔐 لوحة التحكم</h2>
+  <input type="password" id="admin-pass-input" placeholder="كلمة السر" onkeydown="if(event.key==='Enter')checkAdminPass()">
+  <button id="admin-lock-btn" onclick="checkAdminPass()">دخول</button>
+  <span id="admin-lock-err">❌ كلمة السر غلط</span>
+</div>
+
+<!-- الداشبورد -->
+<div id="admin-dashboard">
+  <div class="dash-header">
+    <h1>⚙ لوحة تحكم الشافعي ستيل</h1>
+    <div class="dash-header-btns">
+      <button class="dash-export-btn" onclick="exportSite()">⬇ تصدير الموقع</button>
+      <button class="dash-close-btn" onclick="closeAdminDash()">✕ إغلاق</button>
+    </div>
+  </div>
+
+  <div class="dash-tabs">
+    <button class="dash-tab active" onclick="switchTab('machines')">🤖 الماكينات</button>
+    <button class="dash-tab" onclick="switchTab('orders')">📦 الطلبات</button>
+    <button class="dash-tab" onclick="switchTab('seo')">📈 SEO وجوجل</button>
+    <button class="dash-tab" onclick="switchTab('contact')">📞 التواصل</button>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- تاب الماكينات -->
+    <div class="dash-panel active" id="panel-machines">
+      <div class="dash-add-section">
+        <h3>➕ إضافة ماكينة جديدة</h3>
+        <div class="dash-add-grid">
+          <div class="dash-field">
+            <label>اسم الماكينة</label>
+            <input type="text" id="new-name" placeholder="ماكينة تعبئة كاتشب">
+          </div>
+          <div class="dash-field">
+            <label>الموديل</label>
+            <input type="text" id="new-model" placeholder="Model ASH-XX000">
+          </div>
+          <div class="dash-field">
+            <label>التصنيف</label>
+            <select id="new-cat">
+              <option value="other">أخرى</option>
+              <option value="liquids">سوائل</option>
+              <option value="powder">بودر</option>
+              <option value="legumes">بقوليات</option>
+              <option value="tanks">جونشات</option>
+              <option value="production">خطوط إنتاج</option>
+              <option value="packaging">تغليف</option>
+              <option value="grinding">طحن</option>
+            </select>
+          </div>
+          <div class="dash-field">
+            <label>رابط الصورة</label>
+            <input type="text" id="new-img" placeholder="https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/...">
+          </div>
+          <div class="dash-field" style="grid-column:1/-1">
+            <label>الوصف</label>
+            <input type="text" id="new-desc" placeholder="ستانلس ستيل 304 — تحكم رقمي — سرعة إنتاج عالية">
+          </div>
+        </div>
+        <button class="dash-add-btn" onclick="addMachine()">➕ إضافة الماكينة</button>
+      </div>
+
+      <div class="dash-machines-grid" id="dash-machines-list"></div>
+    </div>
+
+    <!-- تاب الطلبات -->
+    <div class="dash-panel" id="panel-orders">
+      <div id="dash-orders-list"><p style="color:var(--muted)">⏳ بنجيب الطلبات...</p></div>
+    </div>
+
+    <!-- تاب SEO -->
+    <div class="dash-panel" id="panel-seo">
+      <div class="dash-seo-grid">
+        <div class="dash-seo-card">
+          <h3>🔤 عنوان الصفحة (Title)</h3>
+          <input type="text" id="seo-title" placeholder="عنوان الصفحة">
+        </div>
+        <div class="dash-seo-card">
+          <h3>📝 الوصف (Meta Description)</h3>
+          <textarea id="seo-desc" placeholder="وصف الصفحة..."></textarea>
+        </div>
+        <div class="dash-seo-card" style="grid-column:1/-1">
+          <h3>🔑 الكلمات المفتاحية (Keywords)</h3>
+          <textarea id="seo-keywords" placeholder="ماكينات تعبئة, ماكينات تغليف..."></textarea>
+        </div>
+        <div class="dash-seo-card">
+          <h3>📘 عنوان Open Graph (للسوشيال)</h3>
+          <input type="text" id="seo-og-title" placeholder="عنوان السوشيال ميديا">
+        </div>
+        <div class="dash-seo-card">
+          <h3>📘 وصف Open Graph</h3>
+          <textarea id="seo-og-desc" placeholder="وصف السوشيال ميديا..."></textarea>
+        </div>
+        <div class="dash-seo-card" style="grid-column:1/-1">
+          <h3>🔗 الرابط الرسمي (Canonical URL)</h3>
+          <input type="text" id="seo-canonical" placeholder="https://alshafei-steel.com/">
+        </div>
+      </div>
+      <br>
+      <button class="dash-add-btn" onclick="saveSEO()">💾 حفظ إعدادات SEO</button>
+    </div>
+
+    <!-- تاب التواصل -->
+    <div class="dash-panel" id="panel-contact">
+      <div class="dash-seo-grid">
+        <div class="dash-seo-card">
+          <h3>📱 رقم الواتساب الرئيسي</h3>
+          <input type="text" id="c-whatsapp" placeholder="201099747509">
+        </div>
+        <div class="dash-seo-card">
+          <h3>📞 رقم الهاتف (الزرار العائم)</h3>
+          <input type="text" id="c-phone" placeholder="01211768622">
+        </div>
+        <div class="dash-seo-card" style="grid-column:1/-1">
+          <h3>📘 رابط الفيسبوك</h3>
+          <input type="text" id="c-fb" placeholder="https://www.facebook.com/...">
+        </div>
+        <div class="dash-seo-card" style="grid-column:1/-1">
+          <h3>📸 رابط الانستجرام</h3>
+          <input type="text" id="c-ig" placeholder="https://www.instagram.com/...">
+        </div>
+      </div>
+      <br>
+      <button class="dash-add-btn" onclick="saveContact()">💾 حفظ بيانات التواصل</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="dash-toast">✅ تم الحفظ بنجاح!</div>
+
+<script id="admin-panel-script">
+// ========== كلمة السر (مشفّرة SHA-256 — الكلمة الأصلية متسجلة في مكان آمن، مش هنا) ==========
+// عشان تغيّرها تاني: افتح Console في المتصفح واكتب نفس كود hashPass على كلمة السر الجديدة، وحط الناتج هنا.
+const ADMIN_PASS_HASH = 'b26a8f383e02c15b94b8f057fad448282bf26aea330cfb193a112e3ec1557096';
+
+async function hashPass(pass){
+  const enc = new TextEncoder().encode(pass);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function openAdminLock(){
+  document.getElementById('admin-lock').classList.add('active');
+  setTimeout(()=>document.getElementById('admin-pass-input').focus(),100);
+}
+function closeAdminLock(){
+  document.getElementById('admin-lock').classList.remove('active');
+  document.getElementById('admin-pass-input').value='';
+  document.getElementById('admin-lock-err').style.display='none';
+}
+async function checkAdminPass(){
+  const v = document.getElementById('admin-pass-input').value;
+  const h = await hashPass(v);
+  if(h === ADMIN_PASS_HASH){
+    closeAdminLock();
+    openAdminDash();
+  } else {
+    document.getElementById('admin-lock-err').style.display='block';
+    document.getElementById('admin-pass-input').value='';
+    document.getElementById('admin-pass-input').focus();
+  }
+}
+
+// ========== فتح وإغلاق الداشبورد ==========
+function openAdminDash(){
+  document.getElementById('admin-dashboard').classList.add('active');
+  document.body.style.overflow='hidden';
+  loadMachinesPanel();
+  loadOrdersPanel();
+  loadSEOPanel();
+  loadContactPanel();
+}
+function closeAdminDash(){
+  document.getElementById('admin-dashboard').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+// ========== التابس ==========
+function switchTab(name){
+  document.querySelectorAll('.dash-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+// ========== توست ==========
+function showToast(msg){
+  const t = document.getElementById('dash-toast');
+  t.textContent = msg || '✅ تم الحفظ بنجاح!';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ========== قراءة الماكينات من الصفحة ==========
+function getMachinesFromDOM(){
+  const cards = [];
+  document.querySelectorAll('.machine-card').forEach((card,i)=>{
+    if(card.hasAttribute('data-deleted')) return; // اتحذفت قبل كده، منعرضهاش
+    const img = card.querySelector('img');
+    const h3  = card.querySelector('h3');
+    const model = card.querySelector('.machine-model');
+    const p   = card.querySelector('p');
+    if(!h3) return;
+    cards.push({
+      id: i,
+      name: h3.innerText.trim(),
+      model: model ? model.innerText.replace('Model ','').trim() : '',
+      desc: p ? p.innerText.trim() : '',
+      img: img ? img.src : '',
+      cat: card.getAttribute('data-category') || 'other',
+      featured: card.classList.contains('featured-line'),
+      isNew: card.hasAttribute('data-fs-id'),
+      fsId: card.getAttribute('data-fs-id') || null,
+      el: card
+    });
+  });
+  return cards;
+}
+
+// ========== تحميل تاب الماكينات ==========
+function loadMachinesPanel(){
+  const list = document.getElementById('dash-machines-list');
+  list.innerHTML='';
+  const machines = getMachinesFromDOM();
+  machines.forEach(m=>{
+    const div = document.createElement('div');
+    div.className='dash-machine-card';
+    div.dataset.id=m.id;
+    div.innerHTML=`
+      <img loading="lazy" decoding="async" class="dash-machine-thumb" src="${m.img}" onerror="this.src='https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.imgur.com/8Km9tLL.png'">
+      <div class="dash-machine-fields">
+        <div class="dash-field">
+          <label>اسم الماكينة</label>
+          <input type="text" class="dm-name" value="${m.name}">
+        </div>
+        <div class="dash-field">
+          <label>الموديل</label>
+          <input type="text" class="dm-model" value="Model ${m.model}">
+        </div>
+        <div class="dash-field">
+          <label>التصنيف</label>
+          <select class="dm-cat">
+            ${['other','liquids','powder','legumes','tanks','production','packaging','grinding'].map(c=>`<option value="${c}" ${m.cat===c?'selected':''}>${{other:'أخرى',liquids:'سوائل',powder:'بودر',legumes:'بقوليات',tanks:'جونشات',production:'خطوط إنتاج',packaging:'تغليف',grinding:'طحن'}[c]}</option>`).join('')}
+          </select>
+        </div>
+        <div class="dash-field">
+          <label>رابط الصورة</label>
+          <input type="text" class="dm-img" value="${m.img}">
+        </div>
+        <div class="dash-field">
+          <label>الوصف</label>
+          <input type="text" class="dm-desc" value="${m.desc}">
+        </div>
+        <div class="dash-card-actions">
+          <button class="dash-add-btn" style="font-size:12px;padding:7px 16px" onclick="saveMachineCard(this,${m.id},${m.fsId ? "'"+m.fsId+"'" : 'null'})">💾 حفظ</button>
+          <button class="dash-del-btn" onclick="deleteMachineCard(this,${m.id},${m.fsId ? "'"+m.fsId+"'" : 'null'})">🗑 حذف</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// ========== حفظ ماكينة ==========
+async function saveMachineCard(btn, id, fsId){
+  const dashCard = btn.closest('.dash-machine-card');
+  const name  = dashCard.querySelector('.dm-name').value.trim();
+  const model = dashCard.querySelector('.dm-model').value.trim().replace(/^Model\s*/i,'');
+  const cat   = dashCard.querySelector('.dm-cat').value;
+  const imgUrl= dashCard.querySelector('.dm-img').value.trim();
+  const desc  = dashCard.querySelector('.dm-desc').value.trim();
+
+  const cards = document.querySelectorAll('.machine-card');
+  const card  = cards[id];
+  if(!card) return;
+
+  card.querySelector('h3').innerText = name;
+  const modelEl = card.querySelector('.machine-model');
+  if(modelEl) modelEl.innerText = model;
+  const pEl = card.querySelector('p');
+  if(pEl) pEl.innerText = desc;
+  const imgEl = card.querySelector('img');
+  if(imgEl){ imgEl.src=imgUrl; imgEl.alt=name+' — الشافعي ستيل'; }
+  card.setAttribute('data-category', cat);
+
+  // تحديث رابط واتساب الزرار
+  const orderBtn = card.querySelector('.order-btn');
+  if(orderBtn){
+    const msg = encodeURIComponent('مرحبًا،\nأريد الاستفسار عن: '+name+'\nالموديل: '+model+'\nالمصدر: الموقع الرسمي لشركة الشافعي ستيل 🌐');
+    orderBtn.href = 'https://api.whatsapp.com/send?phone=201099747509&text='+msg;
+  }
+
+  // تحديث الصورة المصغرة في الداشبورد
+  dashCard.querySelector('.dash-machine-thumb').src = imgUrl;
+
+  // حفظ التعديل في قاعدة البيانات عشان يظهر لكل الزوار على طول
+  const fb = window.__fbtools, db = window.__db;
+  if(fb && db){
+    try{
+      const data = { name, model, cat, img: imgUrl, desc };
+      if(fsId){
+        // ماكينة كانت أصلًا مضافة من الداشبورد (مش من الكود الأصلي)
+        await fb.setDoc(fb.doc(db,'machines_new',fsId), data, { merge:true });
+      } else {
+        // ماكينة من الكود الأصلي — بنحفظ التعديل كـ "override" مرتبط برقمها
+        await fb.setDoc(fb.doc(db,'machine_overrides','m'+id), data, { merge:true });
+      }
+    }catch(e){
+      console.log('تعذر حفظ التعديل في قاعدة البيانات:', e);
+      showToast('⚠ اتعدّل هنا بس مش متأكد إنه اتحفظ، تأكد من Firestore Rules');
+      return;
+    }
+  }
+
+  showToast('✅ تم حفظ '+name);
+}
+
+// ========== حذف ماكينة ==========
+async function deleteMachineCard(btn, id, fsId){
+  if(!confirm('متأكد إنك عايز تحذف الماكينة دي؟')) return;
+  const cards = document.querySelectorAll('.machine-card');
+  const card  = cards[id];
+
+  const fb = window.__fbtools, db = window.__db;
+  if(fb && db){
+    try{
+      if(fsId){
+        // ماكينة كانت مضافة من الداشبورد — نحذفها نهائيًا من مجموعتها
+        await fb.deleteDoc(fb.doc(db,'machines_new',fsId));
+      } else {
+        // ماكينة من الكود الأصلي — حذف "ناعم" (بنخفيها بس مش بنشيلها) عشان ترقيم باقي الماكينات يفضل ثابت
+        await fb.setDoc(fb.doc(db,'machine_overrides','m'+id), { deleted:true }, { merge:true });
+      }
+    }catch(e){
+      console.log('تعذر حفظ الحذف في قاعدة البيانات:', e);
+      showToast('⚠ تعذر حفظ الحذف، تأكد من Firestore Rules');
+      return;
+    }
+  }
+
+  if(card){
+    if(fsId){ card.remove(); }
+    else { card.style.display='none'; card.setAttribute('data-deleted','1'); }
+  }
+  btn.closest('.dash-machine-card').remove();
+  showToast('🗑 تم الحذف');
+}
+
+// ========== إضافة ماكينة جديدة ==========
+async function addMachine(){
+  const name  = document.getElementById('new-name').value.trim();
+  const model = document.getElementById('new-model').value.trim();
+  const cat   = document.getElementById('new-cat').value;
+  const imgUrl= document.getElementById('new-img').value.trim();
+  const desc  = document.getElementById('new-desc').value.trim();
+
+  if(!name){ alert('اكتب اسم الماكينة'); return; }
+
+  const fb = window.__fbtools, db = window.__db;
+  if(!fb || !db){ alert('قاعدة البيانات لسه بتتجهز، حاول تاني بعد شوية'); return; }
+
+  const addBtn = document.querySelector('.dash-add-btn[onclick="addMachine()"]');
+  if(addBtn){ addBtn.disabled = true; addBtn.textContent = '⏳ جاري الإضافة...'; }
+
+  let newDocId = null;
+  try{
+    const ref = await fb.addDoc(fb.collection(db,'machines_new'), {
+      name, model, cat, img: imgUrl, desc, createdAt: fb.serverTimestamp()
+    });
+    newDocId = ref.id;
+  }catch(e){
+    console.log('تعذر حفظ الماكينة الجديدة في قاعدة البيانات:', e);
+    showToast('⚠ تعذر حفظ الماكينة، تأكد من Firestore Rules');
+    if(addBtn){ addBtn.disabled = false; addBtn.textContent = '➕ إضافة الماكينة'; }
+    return;
+  }
+
+  // إضافة الكارد فورًا في معاينة الأدمن نفسه (هيظهر لباقي الزوار أول ما الصفحة تتحمل تاني)
+  const targetGrid = document.querySelector('.additional-machines .machines-grid') || document.querySelector('.machines-grid');
+  if(targetGrid){
+    const msg = encodeURIComponent('مرحبًا،\nأريد الاستفسار عن: '+name+'\nالموديل: '+model+'\nالمصدر: الموقع الرسمي لشركة الشافعي ستيل 🌐');
+    const newCard = document.createElement('div');
+    newCard.className = 'machine-card';
+    newCard.setAttribute('data-category', cat);
+    newCard.setAttribute('data-fs-id', newDocId);
+    newCard.innerHTML = `
+      <img loading="lazy" decoding="async" src="${imgUrl||'https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.imgur.com/8Km9tLL.png'}" alt="${name} — الشافعي ستيل">
+      <div class="machine-info">
+        <h3>${name}</h3>
+        <span class="machine-model">${model}</span>
+        <div class="machine-divider"></div>
+        <p>${desc}</p>
+        <a class="order-btn" target="_blank" href="https://api.whatsapp.com/send?phone=201099747509&text=${msg}">🛒 اطلب الآن</a>
+      </div>
+    `;
+    targetGrid.appendChild(newCard);
+  }
+
+  // مسح الحقول
+  ['new-name','new-model','new-img','new-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('new-cat').value='other';
+  if(addBtn){ addBtn.disabled = false; addBtn.textContent = '➕ إضافة الماكينة'; }
+
+  loadMachinesPanel();
+  showToast('✅ تمت إضافة '+name+' وحُفظت في قاعدة البيانات');
+}
+
+// ========== تاب الطلبات ==========
+let __allOrders = [];
+
+async function loadOrdersPanel(){
+  const list = document.getElementById('dash-orders-list');
+  const fb = window.__fbtools, db = window.__db;
+  if(!fb || !db){ list.innerHTML = '<p style="color:var(--muted)">لسه قاعدة البيانات بتتجهز، حاول تاني بعد شوية.</p>'; return; }
+  list.innerHTML = '<p style="color:var(--muted)">⏳ بنجيب الطلبات...</p>';
+  try{
+    const snap = await fb.getDocs(fb.collection(db,'orders'));
+    __allOrders = [];
+    snap.forEach(d=>__allOrders.push({ id:d.id, ...d.data() }));
+    __allOrders.sort((a,b)=>{
+      const ta = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      const tb = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+      return tb - ta;
+    });
+  }catch(e){
+    console.log('تعذر تحميل الطلبات:', e);
+    list.innerHTML = '<p style="color:#ff6b6b;">⚠ تعذر تحميل الطلبات — تأكد من Firestore Rules</p>';
+    return;
+  }
+  renderOrdersTab('pending');
+}
+
+function renderOrdersTab(tab){
+  const list = document.getElementById('dash-orders-list');
+  const pending   = __allOrders.filter(o => (o.status||'قيد المراجعة') === 'قيد المراجعة');
+  const accepted  = __allOrders.filter(o => o.status === 'تم التواصل');
+  const cancelled = __allOrders.filter(o => o.status === 'ملغي' || o.status === 'ملغي تلقائياً');
+
+  const tabBtn = (id, label, count, active) => {
+    const bg   = active ? (id==='pending'?'rgba(123,147,200,0.2)':id==='accepted'?'rgba(245,147,10,0.2)':'rgba(239,68,68,0.15)') : 'rgba(255,255,255,0.04)';
+    const col  = active ? (id==='pending'?'#a8c0ff':id==='accepted'?'#fbb040':'#ff8080') : 'var(--muted)';
+    const bord = active ? (id==='pending'?'rgba(123,147,200,0.4)':id==='accepted'?'rgba(245,147,10,0.4)':'rgba(239,68,68,0.35)') : 'rgba(255,255,255,0.08)';
+    return `<button onclick="renderOrdersTab('${id}')" style="padding:9px 18px;border-radius:25px;border:1px solid ${bord};background:${bg};color:${col};font-family:Cairo,sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;">${label} <span style="background:rgba(255,255,255,0.1);padding:1px 8px;border-radius:20px;font-size:11px;">${count}</span></button>`;
+  };
+
+  const tabs = `<div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+    ${tabBtn('pending','⚪ قيد المراجعة',pending.length,tab==='pending')}
+    ${tabBtn('accepted','🟠 المقبولة',accepted.length,tab==='accepted')}
+    ${tabBtn('cancelled','🔴 الملغية',cancelled.length,tab==='cancelled')}
+    <button onclick="loadOrdersPanel()" style="margin-right:auto;padding:8px 14px;border-radius:25px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:var(--muted);font-family:Cairo,sans-serif;font-size:12px;cursor:pointer;">🔄 تحديث</button>
+  </div>`;
+
+  const currentList = tab==='pending' ? pending : tab==='accepted' ? accepted : cancelled;
+
+  if(currentList.length === 0){
+    const msg = tab==='pending' ? '✅ مفيش طلبات معلقة دلوقتي.' : tab==='accepted' ? 'مفيش طلبات مقبولة لحد دلوقتي.' : 'مفيش طلبات ملغية.';
+    list.innerHTML = tabs + `<p style="color:var(--muted);text-align:center;padding:30px 0;">${msg}</p>`;
+    return;
+  }
+
+  const rows = currentList.map(o=>{
+    let dateStr = '—';
+    try{ if(o.createdAt && o.createdAt.toDate) dateStr = o.createdAt.toDate().toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}); }catch(e){}
+
+    let timeNote = '';
+    if(tab==='pending' && o.createdAt && o.createdAt.toMillis){
+      const ageH = (Date.now() - o.createdAt.toMillis()) / 3600000;
+      const remH = Math.max(0, 48 - ageH);
+      timeNote = `<div style="color:${remH<6?'#ff6b6b':'var(--muted)'};font-size:11px;margin-top:4px;">⏳ ${remH<1?'أقل من ساعة على الإلغاء التلقائي!':'متبقي '+Math.ceil(remH)+' ساعة قبل الإلغاء التلقائي'}</div>`;
+    }
+
+    const cancelNote = (o.cancelReason && o.cancelReason !== 'لم يذكر سبباً' && o.cancelReason !== 'تخطى كتابة السبب')
+      ? `<div style="color:#ff9999;font-size:11px;margin-top:3px;">سبب الإلغاء: ${o.cancelReason}</div>` : '';
+
+    let actions = '';
+    if(tab === 'pending'){
+      actions = `<select onchange="updateOrderStatus('${o.id}', this)" style="border:1px solid rgba(123,147,200,0.3);background:rgba(255,255,255,0.05);color:#fff;padding:7px 12px;border-radius:20px;font-family:Cairo,sans-serif;font-size:12px;cursor:pointer;">
+        <option value="قيد المراجعة" selected>⚪ قيد المراجعة</option>
+        <option value="تم التواصل">🟠 قبول</option>
+        <option value="ملغي">🔴 إلغاء</option>
+      </select>`;
+    } else {
+      actions = `<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+        <button onclick="restoreOrder('${o.id}')" style="padding:6px 14px;border-radius:20px;border:1px solid rgba(123,147,200,0.35);background:rgba(123,147,200,0.1);color:#a8c0ff;font-family:Cairo,sans-serif;font-size:12px;cursor:pointer;" onmouseover="this.style.background='rgba(123,147,200,0.25)'" onmouseout="this.style.background='rgba(123,147,200,0.1)'">↩ استعادة</button>
+        <button onclick="deleteOrder('${o.id}')" style="padding:6px 14px;border-radius:20px;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.08);color:#ff8080;font-family:Cairo,sans-serif;font-size:12px;cursor:pointer;" onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.08)'">🗑 حذف نهائي</button>
+      </div>`;
+    }
+
+    const borderColor = tab==='accepted'?'rgba(245,147,10,0.25)':tab==='cancelled'?'rgba(239,68,68,0.2)':'rgba(255,255,255,0.07)';
+    const dotColor    = tab==='accepted'?'#f5930a':tab==='cancelled'?'#ef4444':'#7b93c8';
+    const dotAnim     = tab==='pending'?'animation:pulse-dot 1.4s infinite;':'';
+
+    return `
+      <div class="dash-order-card" id="dash-card-${o.id}" style="border-color:${borderColor}">
+        <div style="display:flex;align-items:flex-start;gap:12px;flex:1;min-width:0;">
+          <span style="width:13px;height:13px;border-radius:50%;background:${dotColor};display:inline-block;flex-shrink:0;margin-top:4px;${dotAnim}"></span>
+          <div>
+            <h3 style="color:white;font-size:15px;margin-bottom:4px;">${o.machineName||'—'} <span style="color:var(--muted);font-weight:400;font-size:12px;">(${o.machineModel||''})</span></h3>
+            <span style="color:var(--secondary-light);font-size:12.5px;">${o.userName||'عميل'}</span>
+            <div style="color:var(--muted);font-size:11.5px;margin-top:4px;">${dateStr}</div>
+            ${cancelNote}${timeNote}
+          </div>
+        </div>
+        ${actions}
+      </div>
+      <style>@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.3;}}</style>`;
+  }).join('');
+
+  list.innerHTML = tabs + rows;
+}
+
+async function restoreOrder(orderId){
+  const fb = window.__fbtools, db = window.__db;
+  try{
+    await fb.updateDoc(fb.doc(db,'orders',orderId), { status: 'قيد المراجعة', canceledByUser: false });
+    const o = __allOrders.find(x=>x.id===orderId);
+    if(o){ o.status = 'قيد المراجعة'; o.canceledByUser = false; }
+    const card = document.getElementById('dash-card-'+orderId);
+    if(card){ card.style.transition='opacity 0.3s'; card.style.opacity='0'; setTimeout(()=>card.remove(),300); }
+    showToast('↩ تم استعادة الطلب لقيد المراجعة');
+  }catch(e){ showToast('❌ تعذر الاستعادة'); }
+}
+
+async function deleteOrder(orderId){
+  if(!confirm('هتحذف الطلب ده نهائياً؟ مش هيرجع!')) return;
+  const fb = window.__fbtools, db = window.__db;
+  try{
+    await fb.deleteDoc(fb.doc(db,'orders',orderId));
+    __allOrders = __allOrders.filter(x=>x.id!==orderId);
+    const card = document.getElementById('dash-card-'+orderId);
+    if(card){ card.style.transition='opacity 0.3s'; card.style.opacity='0'; setTimeout(()=>card.remove(),300); }
+    showToast('🗑 تم الحذف نهائياً');
+  }catch(e){ showToast('❌ تعذر الحذف — تأكد من Firestore Rules'); }
+}
+async function updateOrderStatus(orderId, selectEl){
+  const fb = window.__fbtools, db = window.__db;
+  const newStatus = selectEl.value;
+  try{
+    await fb.updateDoc(fb.doc(db,'orders',orderId), { status: newStatus });
+
+    // إرسال إيميل للعميل
+    const order = __allOrders.find(x=>x.id===orderId);
+    if(order && order.userEmail){
+      let subject = '', message = '';
+      if(newStatus === 'تم التواصل'){
+        subject = '🟠 تم قبول طلبك — شركة الشافعي ستيل';
+        message = `مرحباً ${order.userName || 'عزيزنا العميل'}،\n\nيسعدنا إخبارك بأنه تم قبول طلبك!\n\nالماكينة: ${order.machineName||''}\nالموديل: ${order.machineModel||''}\n\nسيتواصل معك فريقنا في أقرب وقت على هذا البريد أو على رقمك المسجل.\n\nللتواصل المباشر: alshafystyl@gmail.com`;
+      } else if(newStatus === 'ملغي'){
+        subject = '🔴 تم إلغاء طلبك — شركة الشافعي ستيل';
+        message = `مرحباً ${order.userName || 'عزيزنا العميل'}،\n\nنأسف لإخبارك بأنه تم إلغاء طلبك.\n\nالماكينة: ${order.machineName||''}\nالموديل: ${order.machineModel||''}\n\nللاستفسار يرجى التواصل معنا على: alshafystyl@gmail.com`;
+      }
+      if(subject){
+        emailjs.send('service_by1zuyk','template_hb5d728',{
+          client_email : order.userEmail,
+          client_name  : order.userName || 'عزيزنا العميل',
+          subject, message
+        }).catch(e=>console.log('تعذر إرسال الإشعار:',e));
+      }
+    }
+
+    // الكارد يختفي من الداشبورد فوراً
+    const card = document.getElementById('dash-card-'+orderId);
+    if(card){
+      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(20px)';
+      setTimeout(()=>{ card.remove();
+        const list = document.getElementById('orders-list');
+        if(list && !list.querySelector('.dash-order-card')){
+          list.innerHTML = '<p style="color:var(--muted)">✅ مفيش طلبات معلقة دلوقتي.</p>';
+        }
+      }, 400);
+    }
+    if(newStatus === 'تم التواصل') showToast('🟠 تم القبول وتم إبلاغ العميل بالإيميل');
+    else if(newStatus === 'ملغي') showToast('🔴 تم الإلغاء وتم إبلاغ العميل بالإيميل');
+    else showToast('✅ تم تحديث حالة الطلب');
+  }catch(e){
+    console.log('تعذر تحديث حالة الطلب:', e);
+    showToast('❌ تعذر الحفظ، حاول تاني');
+    selectEl.value = 'قيد المراجعة';
+  }
+}
+
+// ========== تحميل SEO ==========
+function loadSEOPanel(){
+  document.getElementById('seo-title').value       = document.title || '';
+  document.getElementById('seo-desc').value        = (document.querySelector('meta[name="description"]')||{}).content||'';
+  document.getElementById('seo-keywords').value    = (document.querySelector('meta[name="keywords"]')||{}).content||'';
+  document.getElementById('seo-og-title').value    = (document.querySelector('meta[property="og:title"]')||{}).content||'';
+  document.getElementById('seo-og-desc').value     = (document.querySelector('meta[property="og:description"]')||{}).content||'';
+  document.getElementById('seo-canonical').value   = (document.querySelector('link[rel="canonical"]')||{}).href||'';
+}
+async function saveSEO(){
+  document.title = document.getElementById('seo-title').value;
+  const setMeta = (sel,attr,val)=>{const el=document.querySelector(sel);if(el)el[attr]=val;};
+  setMeta('meta[name="description"]','content',document.getElementById('seo-desc').value);
+  setMeta('meta[name="keywords"]','content',document.getElementById('seo-keywords').value);
+  setMeta('meta[property="og:title"]','content',document.getElementById('seo-og-title').value);
+  setMeta('meta[property="og:description"]','content',document.getElementById('seo-og-desc').value);
+  const can=document.querySelector('link[rel="canonical"]');
+  if(can) can.href=document.getElementById('seo-canonical').value;
+
+  const fb = window.__fbtools, db = window.__db;
+  if(fb && db){
+    try{
+      await fb.setDoc(fb.doc(db,'site_settings','seo'), {
+        title: document.getElementById('seo-title').value,
+        desc: document.getElementById('seo-desc').value,
+        keywords: document.getElementById('seo-keywords').value,
+        ogTitle: document.getElementById('seo-og-title').value,
+        ogDesc: document.getElementById('seo-og-desc').value,
+        canonical: document.getElementById('seo-canonical').value
+      }, { merge:true });
+    }catch(e){
+      console.log('تعذر حفظ إعدادات SEO في قاعدة البيانات:', e);
+      showToast('⚠ اتغيّر هنا بس مش متأكد إنه اتحفظ، تأكد من Firestore Rules');
+      return;
+    }
+  }
+  showToast('✅ تم حفظ إعدادات SEO لكل الزوار');
+}
+
+// ========== تحميل التواصل ==========
+function loadContactPanel(){
+  const waEl = document.querySelector('a.float-whatsapp');
+  if(waEl){
+    const href=waEl.href||'';
+    const m=href.match(/wa\.me\/(\d+)/);
+    if(m) document.getElementById('c-whatsapp').value=m[1];
+  }
+  const callEl=document.querySelector('a.float-call');
+  if(callEl){
+    document.getElementById('c-phone').value=(callEl.href||'').replace('tel:','');
+  }
+  const fbEl=document.querySelector('a.facebook-icon');
+  if(fbEl) document.getElementById('c-fb').value=fbEl.href||'';
+  const igEl=document.querySelector('a.instagram-icon');
+  if(igEl) document.getElementById('c-ig').value=igEl.href||'';
+}
+async function saveContact(){
+  const wa=document.getElementById('c-whatsapp').value.trim();
+  const ph=document.getElementById('c-phone').value.trim();
+  const fb=document.getElementById('c-fb').value.trim();
+  const ig=document.getElementById('c-ig').value.trim();
+
+  const waEl=document.querySelector('a.float-whatsapp');
+  if(waEl){ waEl.href='https://wa.me/'+wa; waEl.querySelector('span').textContent=ph.startsWith('2')?ph.slice(2):ph; }
+  const callEl=document.querySelector('a.float-call');
+  if(callEl){ callEl.href='tel:'+ph; callEl.querySelector('span').textContent=ph; }
+  const fbEl=document.querySelector('a.facebook-icon');
+  if(fbEl) fbEl.href=fb;
+  const igEl=document.querySelector('a.instagram-icon');
+  if(igEl) igEl.href=ig;
+
+  // تحديث روابط الواتساب في كل الأزرار
+  if(wa){
+    document.querySelectorAll('.order-btn, a.float-whatsapp, a[href*="api.whatsapp"], a[href*="wa.me"]').forEach(a=>{
+      if(a.href && a.href.includes('whatsapp') || a.href && a.href.includes('wa.me')){
+        a.href=a.href.replace(/phone=\d+/,'phone='+wa).replace(/wa\.me\/\d+/,'wa.me/'+wa);
+      }
+    });
+  }
+
+  const fbtools = window.__fbtools, db = window.__db;
+  if(fbtools && db){
+    try{
+      await fbtools.setDoc(fbtools.doc(db,'site_settings','contact'), {
+        whatsapp: wa, phone: ph, fb, ig
+      }, { merge:true });
+    }catch(e){
+      console.log('تعذر حفظ بيانات التواصل في قاعدة البيانات:', e);
+      showToast('⚠ اتغيّر هنا بس مش متأكد إنه اتحفظ، تأكد من Firestore Rules');
+      return;
+    }
+  }
+  showToast('✅ تم حفظ بيانات التواصل لكل الزوار');
+}
+
+// ========== تصدير الموقع ==========
+// ملاحظة: لوحة التحكم بالكامل (الاستايل + الفورم + السكريبت) بتتحمّل ديناميكيًا لما تفتحها بس،
+// عشان كده لازم نشيلها من النسخة المُصدَّرة، وإلا هتفضل متضمنة في كل تصدير جديد وهنرجع لنفس مشكلة تقيل حجم الصفحة.
+function exportSite(){
+  const btn = document.querySelector('.dash-export-btn');
+  btn.textContent='⏳ جاري التصدير...';
+
+  setTimeout(()=>{
+    const clone = document.documentElement.cloneNode(true);
+    ['admin-panel-style','admin-lock','admin-dashboard','dash-toast','admin-panel-script'].forEach(id=>{
+      const el = clone.querySelector('#'+id);
+      if(el) el.remove();
+    });
+    const fullHTML = '<!DOCTYPE html>\n' + clone.outerHTML;
+    const blob = new Blob([fullHTML], {type:'text/html;charset=utf-8'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'alshafei-steel-updated.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    btn.textContent='⬇ تصدير الموقع';
+    showToast('✅ تم تصدير الموقع بنجاح! (لوحة التحكم اتشالت من النسخة المُصدَّرة تلقائيًا)');
+  }, 400);
+}
+</script>
