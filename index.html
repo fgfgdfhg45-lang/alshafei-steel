@@ -1902,5 +1902,60 @@ document.querySelectorAll('.nav-links a').forEach(a=>{
 <script>window.SITE_PREFIX="";</script>
 <script src="assets/search-data.js"></script>
 <script src="assets/site-search.js"></script>
+
+<!-- ========== PAGE OVERLAY (حسابي / طلباتي) — كان ناقص، وده اللي بيخلي الزرارين شغالين ========== -->
+<style>
+#page-overlay{
+  position:fixed;
+  inset:0;
+  background:var(--dark);
+  z-index:8500;
+  display:none;
+  overflow-y:auto;
+  font-family:'Cairo',sans-serif;
+}
+#page-overlay-close{
+  position:fixed;
+  top:20px;
+  left:24px;
+  font-size:28px;
+  color:rgba(255,255,255,0.6);
+  background:rgba(255,255,255,0.06);
+  border:none;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  cursor:pointer;
+  line-height:1;
+  z-index:8600;
+}
+#page-overlay-close:hover{color:#fff;background:rgba(255,255,255,0.12);}
+#page-content{
+  max-width:640px;
+  margin:0 auto;
+  padding:90px 20px 60px;
+}
+</style>
+<div id="page-overlay">
+  <button id="page-overlay-close" onclick="closePageOverlay()" aria-label="إغلاق">×</button>
+  <div id="page-content"></div>
+</div>
+<script>
+function closePageOverlay(){
+  const overlay = document.getElementById('page-overlay');
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('page-overlay').addEventListener('click', function(e){
+  if(e.target.id === 'page-overlay') closePageOverlay();
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    const overlay = document.getElementById('page-overlay');
+    if(overlay.style.display === 'block') closePageOverlay();
+  }
+});
+</script>
+
 </body>
 </html>
