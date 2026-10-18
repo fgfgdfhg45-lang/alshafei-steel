@@ -72,6 +72,11 @@
   direction:rtl;
 }
 #admin-dashboard.active{display:flex;}
+/* إخفاء أزرار الاتصال والواتساب العائمة وأي عناصر ثابتة أثناء فتح الداشبورد */
+body.admin-open .float-call,
+body.admin-open .float-whatsapp,
+body.admin-open #admin-trigger,
+body.admin-open #login-toast{display:none !important;}
 
 /* هيدر الداشبورد */
 .dash-header{
@@ -376,6 +381,7 @@
   <div class="dash-tabs">
     <button class="dash-tab active" onclick="switchTab('machines')">🤖 الماكينات</button>
     <button class="dash-tab" onclick="switchTab('orders')">📦 الطلبات</button>
+    <button class="dash-tab" onclick="switchTab('reviews');loadReviewsPanel()">⭐ التقييمات</button>
     <button class="dash-tab" onclick="switchTab('seo')">📈 SEO وجوجل</button>
     <button class="dash-tab" onclick="switchTab('contact')">📞 التواصل</button>
   </div>
@@ -439,6 +445,11 @@
     <!-- تاب الطلبات -->
     <div class="dash-panel" id="panel-orders">
       <div id="dash-orders-list"><p style="color:var(--muted)">⏳ بنجيب الطلبات...</p></div>
+    </div>
+
+    <!-- تاب التقييمات -->
+    <div class="dash-panel" id="panel-reviews">
+      <div id="dash-reviews-list"><p style="color:var(--muted)">⏳ بنجيب التقييمات...</p></div>
     </div>
 
     <!-- تاب SEO -->
@@ -547,6 +558,7 @@ async function checkAdminPass(){
 // ========== فتح وإغلاق الداشبورد ==========
 function openAdminDash(){
   document.getElementById('admin-dashboard').classList.add('active');
+  document.body.classList.add('admin-open');
   document.body.style.overflow='hidden';
   loadMachinesPanel();
   loadOrdersPanel();
@@ -555,6 +567,7 @@ function openAdminDash(){
 }
 function closeAdminDash(){
   document.getElementById('admin-dashboard').classList.remove('active');
+  document.body.classList.remove('admin-open');
   document.body.style.overflow='';
 }
 
@@ -1005,6 +1018,41 @@ async function saveSEO(){
     }
   }
   showToast('✅ تم حفظ إعدادات SEO لكل الزوار');
+}
+
+// ========== التقييمات (عرض + حذف) ==========
+async function loadReviewsPanel(){
+  const list = document.getElementById('dash-reviews-list');
+  const fb = window.__fbtools, db = window.__db;
+  if(!fb || !db){ list.innerHTML = '<p style="color:var(--muted)">لسه قاعدة البيانات بتتجهز، حاول تاني بعد شوية.</p>'; return; }
+  list.innerHTML = '<p style="color:var(--muted)">⏳ بنجيب التقييمات...</p>';
+  try{
+    const snap = await fb.getDocs(fb.collection(db,'reviews'));
+    const arr = [];
+    snap.forEach(d=>arr.push({ id:d.id, ...d.data() }));
+    arr.sort((a,b)=>((b.createdAt&&b.createdAt.toMillis)?b.createdAt.toMillis():0)-((a.createdAt&&a.createdAt.toMillis)?a.createdAt.toMillis():0));
+    if(!arr.length){ list.innerHTML = '<p style="color:var(--muted)">مفيش تقييمات جديدة من العملاء لسه.</p>'; return; }
+    list.innerHTML = arr.map(r=>`
+      <div class="dash-order-card" id="rv-card-${__esc(r.id)}">
+        <div style="flex:1;min-width:0;">
+          <div style="color:#f5c842;font-size:16px;">${'★'.repeat(r.rating||0)}${'☆'.repeat(5-(r.rating||0))}</div>
+          <div style="color:#fff;font-weight:700;margin:4px 0;">${__esc(r.name||'عميل')}</div>
+          <div style="color:var(--muted);font-size:13px;line-height:1.7;white-space:pre-line;">${__esc(r.text||'')}</div>
+        </div>
+        <button class="dash-export-btn" style="background:#b91c1c;" onclick="deleteReview('${__esc(r.id)}')">🗑 حذف</button>
+      </div>`).join('');
+  }catch(e){
+    console.log('تعذر تحميل التقييمات:', e);
+    list.innerHTML = '<p style="color:#ff6b6b;">⚠ تعذر تحميل التقييمات — تأكد إن قواعد Firestore فيها مجموعة reviews</p>';
+  }
+}
+async function deleteReview(id){
+  if(!confirm('حذف التقييم ده نهائيًا؟')) return;
+  try{
+    await window.__fbtools.deleteDoc(window.__fbtools.doc(window.__db,'reviews',id));
+    const c = document.getElementById('rv-card-'+id); if(c) c.remove();
+    showToast('🗑 تم حذف التقييم');
+  }catch(e){ console.log(e); showToast('⚠ تعذر الحذف'); }
 }
 
 // ========== تحميل التواصل ==========
