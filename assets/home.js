@@ -854,6 +854,14 @@ document.addEventListener('click', function(e){
     status: 'قيد المراجعة',
     createdAt: serverTimestamp()
   }).then(()=>{
+    // إشعار للشركة بالطلب الجديد
+    try{
+      emailjs.send('service_by1zuyk','template_tw737x3',{
+        from_name: clientName, name: clientName, phone: '—',
+        from_email: clientEmail || '—', email: clientEmail || '—', to_name: 'الشافعي ستيل',
+        message: `🟢 طلب جديد (قيد المراجعة)\nالماكينة: ${machineName}\nالموديل: ${machineModel}\nالعميل: ${clientName}\nالإيميل: ${clientEmail || '—'}`
+      }).catch(e=>console.log('تعذر إرسال إشعار الطلب للشركة:',e));
+    }catch(e){ console.log('EmailJS:',e); }
     // إرسال تأكيد استلام للعميل
     if(clientEmail){
       emailjs.send('service_by1zuyk','template_hb5d728',{

@@ -62,8 +62,18 @@
   }
 
   function sendConfirm(u, info){
-    if(!u.email || u.isAnonymous) return;
     function go(){
+      try{
+        window.emailjs.init('WSWaB5SCkxRR4nwLe');
+        // إشعار للشركة بالطلب الجديد
+        window.emailjs.send('service_by1zuyk', 'template_tw737x3', {
+          from_name: u.displayName || u.email || 'ضيف', name: u.displayName || u.email || 'ضيف', phone: '—',
+          from_email: u.email || '—', email: u.email || '—', to_name: 'الشافعي ستيل',
+          message: '🟢 طلب جديد (قيد المراجعة)\nالماكينة: ' + info.name + '\nالموديل: ' + info.model +
+                   '\nالعميل: ' + (u.displayName || u.email || 'ضيف') + '\nالإيميل: ' + (u.email || '—')
+        }).catch(function(e){ console.log('تعذر إرسال إشعار الطلب للشركة:', e); });
+      }catch(e){ console.log('EmailJS:', e); }
+      if(!u.email || u.isAnonymous) return;
       try{
         window.emailjs.init('WSWaB5SCkxRR4nwLe');
         window.emailjs.send('service_by1zuyk', 'template_hb5d728', {
@@ -87,7 +97,7 @@
       if(!u) return; // زائر مش مسجّل دخول — مفيش حساب نربط الطلب بيه
       return r.fs.addDoc(r.fs.collection(r.db, 'orders'), {
         uid: u.uid,
-        userName: u.displayName || u.email || 'عميل',
+        userName: u.displayName || u.email || 'ضيف',
         userEmail: u.email || '',
         machineName: info.name,
         machineModel: info.model,
