@@ -13,18 +13,61 @@
     send:'Submit review', cancel:'Cancel', thanks:'Thank you! Your review has been published.',
     need:'Please sign in with your account to write a review.', pickStars:'Please choose a star rating.',
     short:'Please write at least 10 characters.', err:'Could not save your review, please try again.',
-    sending:'Sending...', member:'Customer'
+    sending:'Sending...', member:'Customer', country:'Select your country', needCountry:'Please select your country.'
   } : {
     based:'بناءً على %n تقييم حقيقي', write:'اكتب تقييمك', edit:'عدّل تقييمك',
     title:'قيّم تجربتك معنا', name:'اسمك', ph:'احكي لنا عن تجربتك (10 حروف على الأقل)',
     send:'نشر التقييم', cancel:'إلغاء', thanks:'شكرًا لك! تم نشر تقييمك.',
     need:'سجّل دخولك بحسابك الأول علشان تكتب تقييم.', pickStars:'اختار عدد النجوم.',
     short:'اكتب 10 حروف على الأقل.', err:'تعذر حفظ التقييم، حاول تاني.',
-    sending:'جاري الإرسال...', member:'عميل'
+    sending:'جاري الإرسال...', member:'عميل', country:'اختر دولتك', needCountry:'اختار دولتك.'
   };
   var COLORS = ['linear-gradient(135deg,#1a6b3c,#22c55e)','linear-gradient(135deg,#7c3aed,#a78bfa)',
                 'linear-gradient(135deg,#b45309,#f59e0b)','linear-gradient(135deg,#0369a1,#38bdf8)',
                 'linear-gradient(135deg,#be123c,#fb7185)'];
+
+  // [كود الدولة، عربي، إنجليزي]
+  var COUNTRIES = [
+    ['EG','مصر','Egypt'],['SA','السعودية','Saudi Arabia'],['AE','الإمارات','United Arab Emirates'],['KW','الكويت','Kuwait'],
+    ['QA','قطر','Qatar'],['BH','البحرين','Bahrain'],['OM','عُمان','Oman'],['JO','الأردن','Jordan'],['LB','لبنان','Lebanon'],
+    ['SY','سوريا','Syria'],['IQ','العراق','Iraq'],['PS','فلسطين','Palestine'],['YE','اليمن','Yemen'],['SD','السودان','Sudan'],
+    ['LY','ليبيا','Libya'],['TN','تونس','Tunisia'],['DZ','الجزائر','Algeria'],['MA','المغرب','Morocco'],['MR','موريتانيا','Mauritania'],
+    ['SO','الصومال','Somalia'],['DJ','جيبوتي','Djibouti'],['KM','جزر القمر','Comoros'],
+    ['TR','تركيا','Turkey'],['NG','نيجيريا','Nigeria'],['KE','كينيا','Kenya'],['ET','إثيوبيا','Ethiopia'],['GH','غانا','Ghana'],
+    ['ZA','جنوب أفريقيا','South Africa'],['IT','إيطاليا','Italy'],['DE','ألمانيا','Germany'],['FR','فرنسا','France'],
+    ['ES','إسبانيا','Spain'],['GB','المملكة المتحدة','United Kingdom'],['US','الولايات المتحدة','United States'],
+    ['CA','كندا','Canada'],['RU','روسيا','Russia'],['IN','الهند','India'],['PK','باكستان','Pakistan'],['CN','الصين','China'],
+    ['ID','إندونيسيا','Indonesia'],['MY','ماليزيا','Malaysia'],['GR','اليونان','Greece'],['RO','رومانيا','Romania'],['UA','أوكرانيا','Ukraine']
+  ];
+  function cname(code){
+    for(var i = 0; i < COUNTRIES.length; i++) if(COUNTRIES[i][0] === code) return EN ? COUNTRIES[i][2] : COUNTRIES[i][1];
+    return '';
+  }
+  // صورة علم (بتشتغل على كل الأجهزة، وويندوز مبيعرضش الإيموجي كعلم)
+  function flagImg(code){
+    var i = document.createElement('img'); var c = code.toLowerCase();
+    i.src = 'https://flagcdn.com/24x18/' + c + '.png';
+    i.srcset = 'https://flagcdn.com/48x36/' + c + '.png 2x';
+    i.width = 18; i.height = 14; i.alt = code; i.loading = 'lazy';
+    i.style.cssText = 'vertical-align:middle;border-radius:2px;margin-inline-end:5px;';
+    return i;
+  }
+  // تحويل إيموجي الأعلام في التقييمات الأصلية لصور علم (عشان تظهر على ويندوز)
+  function upgradeStaticFlags(){
+    var cards = document.querySelectorAll('#rv-grid .review-card:not(.rv-dyn)');
+    Array.prototype.forEach.call(cards, function(card){
+      var divs = card.querySelectorAll('div');
+      Array.prototype.forEach.call(divs, function(d){
+        if(d.children.length) return;
+        var m = d.textContent.match(/^\s*([\uD83C][\uDDE6-\uDDFF])([\uD83C][\uDDE6-\uDDFF])\s*(.*)$/);
+        if(!m) return;
+        var code = String.fromCharCode(m[1].charCodeAt(1) - 0xDDE6 + 65, m[2].charCodeAt(1) - 0xDDE6 + 65);
+        d.textContent = '';
+        d.appendChild(flagImg(code));
+        d.appendChild(document.createTextNode(m[3]));
+      });
+    });
+  }
   var rows = [], mine = null, rating = 0;
 
   function $(id){ return document.getElementById(id); }
@@ -84,6 +127,11 @@
       head.appendChild(el('div','width:46px;height:46px;border-radius:50%;background:' + COLORS[h % COLORS.length] + ';display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:white;flex-shrink:0;', nm.charAt(0).toUpperCase()));
       var who = el('div');
       who.appendChild(el('div','color:white;font-weight:700;font-size:15px;', nm));
+      if(r.country && cname(r.country)){
+        var cl = el('div','color:var(--muted);font-size:12px;');
+        cl.appendChild(flagImg(r.country)); cl.appendChild(document.createTextNode(cname(r.country)));
+        who.appendChild(cl);
+      }
       head.appendChild(who);
       head.appendChild(el('div','margin-inline-start:auto;color:#f5c842;font-size:16px;', stars(r.rating)));
       card.appendChild(head);
@@ -98,7 +146,7 @@
       rows = [];
       snap.forEach(function(d){
         var v = d.data();
-        if(v && v.rating >= 1 && v.rating <= 5 && v.text) rows.push({ id:d.id, name:v.name, rating:v.rating, text:v.text });
+        if(v && v.rating >= 1 && v.rating <= 5 && v.text) rows.push({ id:d.id, name:v.name, rating:v.rating, text:v.text, country:(typeof v.country === 'string' ? v.country.toUpperCase() : '') });
       });
       var u = window.__auth.currentUser;
       mine = null;
@@ -156,6 +204,14 @@
     var nameIn = el('input', inputCss); nameIn.type = 'text'; nameIn.maxLength = 40; nameIn.placeholder = T.name;
     nameIn.value = (mine && mine.name) || u.displayName || (u.email ? u.email.split('@')[0] : '');
     box.appendChild(nameIn);
+    var sel = el('select', inputCss + 'appearance:auto;');
+    var o0 = document.createElement('option'); o0.value = ''; o0.textContent = T.country; sel.appendChild(o0);
+    COUNTRIES.forEach(function(c){
+      var o = document.createElement('option'); o.value = c[0]; o.textContent = EN ? c[2] : c[1];
+      o.style.color = '#000'; sel.appendChild(o);
+    });
+    sel.value = (mine && mine.country) || '';
+    box.appendChild(sel);
     var txt = el('textarea', inputCss + 'min-height:110px;resize:vertical;'); txt.maxLength = 500; txt.placeholder = T.ph;
     txt.value = mine ? mine.text : '';
     box.appendChild(txt);
@@ -172,11 +228,12 @@
     send.addEventListener('click', function(){
       var text = txt.value.trim(), name = nameIn.value.trim() || T.member;
       if(!rating){ msg.textContent = T.pickStars; return; }
+      if(!sel.value){ msg.textContent = T.needCountry; return; }
       if(text.length < 10){ msg.textContent = T.short; return; }
       msg.textContent = ''; send.disabled = true; send.textContent = T.sending;
       var fb = window.__fbtools, db = window.__db;
       fb.setDoc(fb.doc(db,'reviews',u.uid), {
-        uid: u.uid, name: name, rating: rating, text: text, createdAt: fb.serverTimestamp()
+        uid: u.uid, name: name, rating: rating, text: text, country: sel.value, createdAt: fb.serverTimestamp()
       }).then(function(){
         return load();
       }).then(function(){
@@ -195,6 +252,7 @@
     wrap.appendChild(box);
   }
 
+  upgradeStaticFlags();
   ready(function(){
     renderButton();
     load();

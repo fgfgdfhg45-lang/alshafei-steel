@@ -50,7 +50,7 @@ window.SITE_SEARCH_DATA = [
     "path": "machines/mixers/powder-mixer-304.html"
   },
   {
-    "name": "مُريح شيكولاتة 500 KG",
+    "name": "مريح شيكولاتة 500 KG",
     "model": "Model ASH-MX500",
     "cat": "الخلاطات والتجهيز الصناعي",
     "img": "https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/qYnn7ndW/industrial-mixer-500kg-png.png",
@@ -211,7 +211,7 @@ window.SITE_SEARCH_DATA = [
     "path": "machines/liquids/liquid-filling-5kg.html"
   },
   {
-    "name": "ماكينة تعبئة سوائل 6 نُزل",
+    "name": "ماكينة تعبئة سوائل 6 نوزل",
     "model": "Model ASH-LQ600",
     "cat": "ماكينات تعبئة السوائل",
     "img": "https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/GfHNGMBS/liquid-6nozzle-vpc-png.png",
@@ -225,35 +225,35 @@ window.SITE_SEARCH_DATA = [
     "path": "machines/liquids/liquid-filling-20l.html"
   },
   {
-    "name": "جونشة تحضير شيكولاتة سعة 300 كيلو",
+    "name": "جونش تحضير شيكولاتة سعة 300 كيلو",
     "model": "Model ASH-CT300",
     "cat": "جونشات تحضير الشيكولاتة",
     "img": "https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/jPWcHCMm/300kg-chocolate-preparation-tank-png.png",
     "path": "chocolate/conche-300kg.html"
   },
   {
-    "name": "جونشة تحضير شيكولاتة عينات",
+    "name": "جونش تحضير شيكولاتة عينات",
     "model": "Model ASH-ST150",
     "cat": "جونشات تحضير الشيكولاتة",
     "img": "https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/DHnx8KnG/sample-chocolate-preparation-tank-png.png",
     "path": "chocolate/conche-sample-150.html"
   },
   {
-    "name": "جونشة تحضير شيكولاتة سعة 1.5 طن",
+    "name": "جونش تحضير شيكولاتة سعة 1.5 طن",
     "model": "Model ASH-CT1500",
     "cat": "جونشات تحضير الشيكولاتة",
     "img": "https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/9m29KFsw/1-5ton-chocolate-preparation-tank-png.png",
     "path": "chocolate/conche-1-5ton.html"
   },
   {
-    "name": "جونشة تحضير شيكولاتة سعة 500 كيلو",
+    "name": "جونش تحضير شيكولاتة سعة 500 كيلو",
     "model": "Model ASH-CT500",
     "cat": "جونشات تحضير الشيكولاتة",
     "img": "https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/v4MsNSvg/500kg-chocolate-preparation-tank-png.png",
     "path": "chocolate/conche-500kg.html"
   },
   {
-    "name": "جونشة تحضير شيكولاتة سعة 1 طن",
+    "name": "جونش تحضير شيكولاتة سعة 1 طن",
     "model": "Model ASH-CT1000",
     "cat": "جونشات تحضير الشيكولاتة",
     "img": "https://res.cloudinary.com/dtr0ktugl/image/fetch/https://i.ibb.co/hJV86xsZ/chocolate-preparation-tank-1ton-png.png",
